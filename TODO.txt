@@ -1,0 +1,11 @@
+Views?
+Input totals: income and bills
+Dynamic view of capital (+$, -$)
+add expenses
+Bar chart of area spending
+Bar chart of income and spending
+
+figure out pages
+
+models
+	
