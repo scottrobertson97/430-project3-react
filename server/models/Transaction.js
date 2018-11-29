@@ -39,11 +39,12 @@ const TransactionSchema = new mongoose.Schema({
   },
 });
 
-// DrinkSchema.statics.toAPI = (doc) => ({
-//   name: doc.name,
-//   baseIngredient: doc.baseIngredient,
-//   ingredients: doc.ingredients,
-// });
+TransactionSchema.statics.toAPI = (doc) => ({
+  name: doc.name,
+  amount: doc.amount,
+  type: doc.type,
+  category: doc.category,
+});
 // 
 // DrinkSchema.statics.findByOwner = (ownerId, callback) => {
 //   const search = {
