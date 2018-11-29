@@ -62,6 +62,7 @@ class TransactionForm extends React.Component {
       />
 
       <input type="hidden" name="_csrf" value={this.props.csrf}/>
+      <input className="addTransactionSubmit" type="submit" value="Add Transaction"/>
     </form>
   </div>);};
   

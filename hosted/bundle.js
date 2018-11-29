@@ -105,7 +105,8 @@ var TransactionForm = function (_React$Component) {
             value: this.state.amount,
             name: 'amount'
           }),
-          React.createElement('input', { type: 'hidden', name: '_csrf', value: this.props.csrf })
+          React.createElement('input', { type: 'hidden', name: '_csrf', value: this.props.csrf }),
+          React.createElement('input', { className: 'addTransactionSubmit', type: 'submit', value: 'Add Transaction' })
         )
       );
     }
