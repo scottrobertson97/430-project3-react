@@ -4,7 +4,7 @@ class TransactionForm extends React.Component {
     this.state = {
       name: '',
       amount: 0,
-      type: income,
+      type: "income",
       category: '', 
     };
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -61,7 +61,7 @@ class TransactionForm extends React.Component {
 				name="amount"
       />
 
-      <input type="hidden" name="_csrf" value={props.csrf}/>
+      <input type="hidden" name="_csrf" value={this.props.csrf}/>
     </form>
   </div>);};
   
@@ -83,7 +83,7 @@ class TransactionCategoryOptions extends React.Component {
     super(props);
   };
   render() {
-    switch (props.type) {
+    switch (this.props.type) {
       case "income":
         return (<div>
           <option value="paycheck">Paycheck</option>

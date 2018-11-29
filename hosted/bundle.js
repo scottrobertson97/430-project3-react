@@ -1,226 +1,217 @@
-"use strict";
+'use strict';
 
-var handleDrink = function handleDrink(e) {
-  e.preventDefault();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-  $("#domoMessage").animate({ width: 'hide' }, 350);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-  if ($("#drinkName").val() == '' || $("#baseIngredient").val() == '') {
-    handleError("All fields are required.");
-    return false;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TransactionForm = function (_React$Component) {
+  _inherits(TransactionForm, _React$Component);
+
+  function TransactionForm(props) {
+    _classCallCheck(this, TransactionForm);
+
+    var _this = _possibleConstructorReturn(this, (TransactionForm.__proto__ || Object.getPrototypeOf(TransactionForm)).call(this, props));
+
+    _this.state = {
+      name: '',
+      amount: 0,
+      type: "income",
+      category: ''
+    };
+    _this.handleInputChange = _this.handleInputChange.bind(_this);
+    _this.handleSubmit = _this.handleSubmit.bind(_this);
+    return _this;
   }
 
-  /*
-  need to get data from the from correctly
-  */
-  sendAjax('POST', $("#drinkForm").attr("action"), $("#drinkForm").serialize(), function () {
-    loadDrinksFromServer();
-  });
+  _createClass(TransactionForm, [{
+    key: 'handleInputChange',
+    value: function handleInputChange(event) {
+      var target = event.target;
+      var value = target.type === 'checkbox' ? target.checked : target.value;
+      var name = target.name;
 
-  return false;
-};
-
-var DrinkForm = function DrinkForm(props) {
-  return React.createElement(
-    "div",
-    null,
-    React.createElement(
-      "form",
-      { id: "drinkForm",
-        onSubmit: handleDrink,
-        name: "drinkForm",
-        action: "/maker",
-        method: "POST",
-        className: "drinkForm"
-      },
-      React.createElement(
-        "label",
-        { htmlFor: "name" },
-        "Name: "
-      ),
-      React.createElement("input", { id: "drinkName", type: "text", name: "name", placeholder: "Drink Name" }),
-      React.createElement("br", null),
-      React.createElement(
-        "label",
-        { htmlFor: "baseIngredient" },
-        "Base: "
-      ),
-      React.createElement(
-        "select",
-        { id: "baseIngredient", name: "baseIngredient" },
-        React.createElement(
-          "option",
-          { value: "other" },
-          "Other"
-        ),
-        React.createElement(
-          "option",
-          { value: "vodka" },
-          "Vodka"
-        ),
-        React.createElement(
-          "option",
-          { value: "gin" },
-          "Gin"
-        ),
-        React.createElement(
-          "option",
-          { value: "rum" },
-          "Rum"
-        ),
-        React.createElement(
-          "option",
-          { value: "whiskey" },
-          "Whiskey"
-        ),
-        React.createElement(
-          "option",
-          { value: "tequila" },
-          "Tequila"
-        )
-      ),
-      React.createElement("br", null),
-      React.createElement(
-        "label",
-        { htmlFor: "ingredientOz" },
-        "Oz: "
-      ),
-      React.createElement("input", { id: "ingredientOz", type: "number", name: "ingredientOz", min: "0", max: "5", step: "0.25" }),
-      React.createElement(
-        "label",
-        { htmlFor: "ingredientName" },
-        "Ingredient: "
-      ),
-      React.createElement("input", { id: "ingredientName", type: "text", name: "ingredientName" }),
-      React.createElement("br", null),
-      React.createElement(
-        "label",
-        { htmlFor: "ingredientOz" },
-        "Oz: "
-      ),
-      React.createElement("input", { id: "ingredientOz", type: "number", name: "ingredientOz", min: "0", max: "5", step: "0.25" }),
-      React.createElement(
-        "label",
-        { htmlFor: "ingredientName" },
-        "Ingredient: "
-      ),
-      React.createElement("input", { id: "ingredientName", type: "text", name: "ingredientName" }),
-      React.createElement("br", null),
-      React.createElement(
-        "label",
-        { htmlFor: "ingredientOz" },
-        "Oz: "
-      ),
-      React.createElement("input", { id: "ingredientOz", type: "number", name: "ingredientOz", min: "0", max: "5", step: "0.25" }),
-      React.createElement(
-        "label",
-        { htmlFor: "ingredientName" },
-        "Ingredient: "
-      ),
-      React.createElement("input", { id: "ingredientName", type: "text", name: "ingredientName" }),
-      React.createElement("br", null),
-      React.createElement(
-        "label",
-        { htmlFor: "ingredientOz" },
-        "Oz: "
-      ),
-      React.createElement("input", { id: "ingredientOz", type: "number", name: "ingredientOz", min: "0", max: "5", step: "0.25" }),
-      React.createElement(
-        "label",
-        { htmlFor: "ingredientName" },
-        "Ingredient: "
-      ),
-      React.createElement("input", { id: "ingredientName", type: "text", name: "ingredientName" }),
-      React.createElement("br", null),
-      React.createElement(
-        "label",
-        { htmlFor: "ingredientOz" },
-        "Oz: "
-      ),
-      React.createElement("input", { id: "ingredientOz", type: "number", name: "ingredientOz", min: "0", max: "5", step: "0.25" }),
-      React.createElement(
-        "label",
-        { htmlFor: "ingredientName" },
-        "Ingredient: "
-      ),
-      React.createElement("input", { id: "ingredientName", type: "text", name: "ingredientName" }),
-      React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-      React.createElement("input", { className: "makeDrinkSubmit", type: "submit", value: "Add Drink" })
-    )
-  );
-};
-
-var DrinkList = function DrinkList(props) {
-  console.dir(props);
-  if (props.drinks.length === 0) {
-    return React.createElement(
-      "div",
-      { className: "drinkList" },
-      React.createElement(
-        "h3",
-        { className: "emptyDrink" },
-        "No Drinks yet"
-      )
-    );
-  }
-
-  var ingredientNode = function ingredientNode(drink) {
-    var ingredients = [];
-    for (var i = 0; i < drink.ingredients.length; i++) {
-      ingredients.push(React.createElement(
-        "div",
-        { className: "drinkIngredient" },
-        React.createElement(
-          "p",
-          null,
-          drink.ingredients[i].oz,
-          " Oz of ",
-          drink.ingredients[i].name
-        )
-      ));
+      this.setState(_defineProperty({}, name, value));
     }
-    return ingredients;
-  };
+  }, {
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'form',
+          { id: 'transactionForm', onSubmit: this.handleSubmit },
+          React.createElement(
+            'label',
+            { htmlFor: 'name' },
+            'Transaction Name'
+          ),
+          React.createElement('input', {
+            type: 'text',
+            id: 'transactionName',
+            onChange: this.handleInputChange,
+            value: this.state.name,
+            name: 'name'
+          }),
+          React.createElement(
+            'label',
+            { htmlFor: 'type' },
+            'Transaction Type'
+          ),
+          React.createElement(
+            'select',
+            { id: 'transactionType', value: this.state.type, onChange: this.handleChange, name: 'type' },
+            React.createElement(
+              'option',
+              { value: 'income' },
+              'Income'
+            ),
+            React.createElement(
+              'option',
+              { value: 'bill' },
+              'Bill'
+            ),
+            React.createElement(
+              'option',
+              { value: 'expense' },
+              'Expense'
+            )
+          ),
+          React.createElement(
+            'label',
+            { htmlFor: 'category' },
+            'Transaction Type'
+          ),
+          React.createElement(
+            'select',
+            { id: 'transactionCategory', value: this.state.category, onChange: this.handleChange, name: 'category' },
+            React.createElement(TransactionCategoryOptions, { type: this.state.type })
+          ),
+          React.createElement(
+            'label',
+            { htmlFor: 'amount' },
+            '$ Amount'
+          ),
+          React.createElement('input', {
+            type: 'number',
+            id: 'transactionAmount',
+            onChange: this.handleInputChange,
+            value: this.state.amount,
+            name: 'amount'
+          }),
+          React.createElement('input', { type: 'hidden', name: '_csrf', value: this.props.csrf })
+        )
+      );
+    }
+  }, {
+    key: 'handleSubmit',
+    value: function handleSubmit(e) {
+      e.preventDefault();
 
-  var drinkNodes = props.drinks.map(function (drink) {
-    return React.createElement(
-      "div",
-      { key: drink._id, className: "drink" },
-      React.createElement(
-        "h3",
-        { className: "drinkName" },
-        "Name: ",
-        drink.name
-      ),
-      React.createElement(
-        "h4",
-        { className: "drinkBase" },
-        "Base Ingredient: ",
-        drink.baseIngredient
-      ),
-      ingredientNode(drink)
-    );
-  });
+      //error check
 
-  return React.createElement(
-    "div",
-    { className: "drinkList" },
-    drinkNodes
-  );
-};
+      sendAjax('POST', $("#transactionForm").attr("action"), $("#transactionForm").serialize(), function () {
+        loadDrinksFromServer();
+      });
 
-var loadDrinksFromServer = function loadDrinksFromServer() {
-  sendAjax('GET', '/getDrinks', null, function (data) {
-    ReactDOM.render(React.createElement(DrinkList, { drinks: data.drinks }), document.querySelector("#drinks"));
-  });
-};
+      return false;
+    }
+  }]);
+
+  return TransactionForm;
+}(React.Component);
+
+;
+
+var TransactionCategoryOptions = function (_React$Component2) {
+  _inherits(TransactionCategoryOptions, _React$Component2);
+
+  function TransactionCategoryOptions(props) {
+    _classCallCheck(this, TransactionCategoryOptions);
+
+    return _possibleConstructorReturn(this, (TransactionCategoryOptions.__proto__ || Object.getPrototypeOf(TransactionCategoryOptions)).call(this, props));
+  }
+
+  _createClass(TransactionCategoryOptions, [{
+    key: 'render',
+    value: function render() {
+      switch (this.props.type) {
+        case "income":
+          return React.createElement(
+            'div',
+            null,
+            React.createElement(
+              'option',
+              { value: 'paycheck' },
+              'Paycheck'
+            ),
+            React.createElement(
+              'option',
+              { value: 'cash' },
+              'Cash'
+            )
+          );
+          break;
+        case "bill":
+          return React.createElement(
+            'div',
+            null,
+            React.createElement(
+              'option',
+              { value: 'rent' },
+              'Rent'
+            ),
+            React.createElement(
+              'option',
+              { value: 'utilities' },
+              'Utilities'
+            )
+          );
+          break;
+        case "expense":
+          return React.createElement(
+            'div',
+            null,
+            React.createElement(
+              'option',
+              { value: 'food' },
+              'Food'
+            ),
+            React.createElement(
+              'option',
+              { value: 'entertainment' },
+              'Entertainment'
+            )
+          );
+          break;
+        default:
+          return React.createElement(
+            'div',
+            null,
+            React.createElement(
+              'option',
+              { value: '?' },
+              '?'
+            )
+          );
+          break;
+      };
+    }
+  }]);
+
+  return TransactionCategoryOptions;
+}(React.Component);
+
+;
 
 var setup = function setup(csrf) {
-
-  ReactDOM.render(React.createElement(DrinkForm, { csrf: csrf }), document.querySelector("#makeDrinks"));
-
-  ReactDOM.render(React.createElement(DrinkList, { drinks: [] }), document.querySelector("#drinks"));
-  loadDrinksFromServer();
+  ReactDOM.render(React.createElement(TransactionForm, { csrf: csrf }), document.querySelector("#addTransaction"));
 };
 
 var getToken = function getToken() {
@@ -236,11 +227,9 @@ $(document).ready(function () {
 
 var handleError = function handleError(message) {
   $("#errorMessage").text(message);
-  $("#domoMessage").animate({ width: 'toggle' }, 350);
 };
 
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({ width: 'hide' }, 350);
   window.location = response.redirect;
 };
 

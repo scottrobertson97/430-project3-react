@@ -46,25 +46,25 @@ TransactionSchema.statics.toAPI = (doc) => ({
   type: doc.type,
   category: doc.category,
 });
- 
+
 TransactionSchema.statics.findByOwner = (ownerId, callback) => {
   const search = {
     owner: convertId(ownerId),
   };
- 
-  return DrinkModel.find(search).select('name amount type category').exec(callback);
+
+  return TransactionModel.find(search).select('name amount type category').exec(callback);
 };
 
 // DrinkSchema.statics.findAll = (callback) => {
 //   const list = DrinkModel.find().select('name baseIngredient ingredients').exec(callback);
 //   return list;
 // };
-// 
+//
 // DrinkSchema.statics.findByBaseIngredient = (baseIngredient, callback) => {
 //   const search = {
 //     baseIngredient,
 //   };
-// 
+//
 //   return DrinkModel.find(search).select('name baseIngredient ingredients').exec(callback);
 // };
 

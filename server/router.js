@@ -16,8 +16,8 @@ const router = (app) => {
   app.get('/addTransaction', mid.requiresSecure, mid.requiresLogin, controllers.Transaction.addTransactionPage);
   app.post('/addTransaction', mid.requiresSecure, mid.requiresLogin, controllers.Transaction.addTransaction);
   app.get('/getTransactions', mid.requiresSecure, mid.requiresLogin, controllers.Transaction.getTransactions);
-  // 
-  // 
+  //
+  //
   // app.get('/getDomos', mid.requiresSecure, mid.requiresLogin, controllers.Domo.getDomos);
   // app.get('/getDrinks', mid.requiresSecure, mid.requiresLogin, controllers.Drink.getDrinks);
   // app.get('/maker', mid.requiresSecure, mid.requiresLogin, controllers.Drink.makerPage);
