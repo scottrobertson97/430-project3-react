@@ -1,11 +1,29 @@
-Views?
-Input totals: income and bills
-Dynamic view of capital (+$, -$)
-add expenses
-Bar chart of area spending
-Bar chart of income and spending
+Views
+  input income
+  input expenses
+  dynamic view of capital ($)
+  list expenses
+  char of area of spending
+  bar of spending out of income
 
-figure out pages
+Pages
+  ?
 
-models
-	
+Models
+  Account
+  Transaction
+    Income
+    Bill
+    Expense
+
+Controllers
+  Transaction
+    Income
+    Bill
+    Expense
+
+Router
+
+Client
+
+CSS
