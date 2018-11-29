@@ -16,6 +16,7 @@ const TransactionSchema = new mongoose.Schema({
   },
   amount: {
     type: Number,
+    min: 0,
     required: true,
   },
   type: {
@@ -45,15 +46,15 @@ TransactionSchema.statics.toAPI = (doc) => ({
   type: doc.type,
   category: doc.category,
 });
-// 
-// DrinkSchema.statics.findByOwner = (ownerId, callback) => {
-//   const search = {
-//     owner: convertId(ownerId),
-//   };
-// 
-//   return DrinkModel.find(search).select('name baseIngredient ingredients').exec(callback);
-// };
-// 
+ 
+TransactionSchema.statics.findByOwner = (ownerId, callback) => {
+  const search = {
+    owner: convertId(ownerId),
+  };
+ 
+  return DrinkModel.find(search).select('name amount type category').exec(callback);
+};
+
 // DrinkSchema.statics.findAll = (callback) => {
 //   const list = DrinkModel.find().select('name baseIngredient ingredients').exec(callback);
 //   return list;

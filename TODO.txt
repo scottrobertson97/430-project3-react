@@ -1,29 +1,35 @@
-Views
-  input income
-  input expenses
-  dynamic view of capital ($)
-  list expenses
-  char of area of spending
-  bar of spending out of income
+ToDo ☐☑☒
 
-Pages
-  ?
+☐ Views
+  ☐ input income
+  ☐ input expenses
+  ☐ dynamic view of capital ($)
+  ☐ list expenses
+  ☐ char of area of spending
+  ☐ bar of spending out of income
 
-Models
-  Account
-  Transaction
-    Income
-    Bill
-    Expense
+☐ Pages
+  ☑ Login
+  ☐ App page
 
-Controllers
-  Transaction
-    Income
-    Bill
-    Expense
+☐ Models
+  ☐ Account
+  ☐ Transaction
+    ☐ Income
+    ☐ Bill
+    ☐ Expense
 
-Router
+☐ Controllers
+  ☐ Transaction
+    ☐ Income
+    ☐ Bill
+    ☐ Expense
 
-Client
+☐ Router
 
-CSS
+☐ Client
+  ☐ transaction form
+  ☑ helper
+  ☑ login
+
+☐ CSS
