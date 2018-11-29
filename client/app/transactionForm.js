@@ -113,7 +113,7 @@ class TransactionCategoryOptions extends React.Component {
 
 const setup = function(csrf) {
   ReactDOM.render(
-    <DrinkForm csrf={csrf}/>,
+    <TransactionForm csrf={csrf}/>,
     document.querySelector("#addTransaction")
   );
 };
