@@ -14,6 +14,7 @@ const router = (app) => {
   app.get('/logout', mid.requiresSecure, mid.requiresLogin, controllers.Account.logout);
   //main page
   app.get('/app', mid.requiresSecure, mid.requiresLogin, controllers.Transaction.addTransactionPage);
+  app.post('/app', mid.requiresSecure, mid.requiresLogin, controllers.Transaction.addTransaction);
   // add transactions
   app.get('/addTransaction', mid.requiresSecure, mid.requiresLogin, controllers.Transaction.addTransactionPage);
   app.post('/addTransaction', mid.requiresSecure, mid.requiresLogin, controllers.Transaction.addTransaction);

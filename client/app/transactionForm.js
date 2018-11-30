@@ -8,6 +8,11 @@ class TransactionForm extends React.Component {
       category: '', 
       categories: ['paycheck', 'cash'],
     };
+    this.categoryTypes = {
+      income: ['paycheck', 'cash'],
+      bill: ['rent', 'utilities'],
+      expense: ['food', 'entertainment'],
+    };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.updateCategories = this.updateCategories.bind(this);
@@ -24,19 +29,16 @@ class TransactionForm extends React.Component {
   };
 
   updateCategories(e){
-    const income = ['paycheck', 'cash'];
-    const bill = ['rent', 'utilities'];
-    const expense = ['food', 'entertainment'];
-    let newCategories = income;
+    let newCategories = this.categoryTypes.income;
     switch(e.target.value){
       case 'income':
-        newCategories = income;
+        newCategories = this.categoryTypes.income;
         break;
       case 'bill':
-        newCategories = bill;
+        newCategories = this.categoryTypes.bill;
         break;
       case 'expense':
-        newCategories = expense;
+        newCategories = this.categoryTypes.expense;
         break;
     }
 
@@ -97,11 +99,51 @@ class TransactionForm extends React.Component {
     //error check
     
     sendAjax('POST', $("#transactionForm").attr("action"), $("#transactionForm").serialize(), function() {
-      loadDrinksFromServer();
+      getAllTransactions();
     });
   
     return false;
   };
+};
+
+class TransactionList extends React.Component {
+  constructor(props) {
+    super(props);
+  };
+
+  render() {
+    if (this.props.transactions.length === 0) {
+      return (
+        <div className="transactionList">
+          <h1>All Transactions</h1>
+          <h3 className="emptyTransaction">No transactions yet</h3>
+        </div>
+      );
+    }
+
+    const transactionNodes = this.props.transactions.map(function(t){
+      return (<div key={t._id} className="transaction">        
+        <h3 className="transactionName">Name: {t.name}</h3>
+        <p className="transactionAmount">$: {t.amount}</p>
+        <p className="transactionType">Type: {t.type}</p>  
+        <p className="transactionCategory">Category: {t.category}</p>  
+      </div>);
+    });
+
+    return (<div className="transactionList">
+      <h1>All Transactions</h1>
+      {transactionNodes}
+    </div>); 
+  };
+};
+
+const getAllTransactions = () => {
+  sendAjax('GET', '/getTransactions', null, (data) => {
+    ReactDOM.render(
+      <TransactionList transactions={data.transactions} />,
+      document.querySelector("#transactionList")
+    );
+  });
 };
 
 const setup = function(csrf) {
@@ -109,6 +151,13 @@ const setup = function(csrf) {
     <TransactionForm csrf={csrf}/>,
     document.querySelector("#addTransaction")
   );
+
+  ReactDOM.render(
+    <TransactionList transactions={[]} />,
+    document.querySelector("#transactionList")
+  );
+
+  getAllTransactions();
 };
 
 const getToken = () =>{

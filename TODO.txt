@@ -1,11 +1,11 @@
 ToDo ☐☑☒
 
 ☐ Views
-  ☐ input income
-  ☐ input expenses
+  ☑ input income/bill/expense
   ☐ dynamic view of capital ($)
+  ☑ list all transactions
   ☐ list expenses
-  ☐ char of area of spending
+  ☐ chart of area of spending
   ☐ bar of spending out of income
 
 ☐ Pages
@@ -13,22 +13,18 @@ ToDo ☐☑☒
   ☐ App page
 
 ☐ Models
-  ☐ Account
+  ☑ Account
   ☐ Transaction
-    ☐ Income
-    ☐ Bill
-    ☐ Expense
+    
 
 ☐ Controllers
+    ☑ Account
   ☐ Transaction
-    ☐ Income
-    ☐ Bill
-    ☐ Expense
 
 ☐ Router
 
 ☐ Client
-  ☐ transaction form
+  ☑ transaction form
   ☑ helper
   ☑ login
 

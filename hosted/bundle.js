@@ -25,6 +25,11 @@ var TransactionForm = function (_React$Component) {
       category: '',
       categories: ['paycheck', 'cash']
     };
+    _this.categoryTypes = {
+      income: ['paycheck', 'cash'],
+      bill: ['rent', 'utilities'],
+      expense: ['food', 'entertainment']
+    };
     _this.handleInputChange = _this.handleInputChange.bind(_this);
     _this.handleSubmit = _this.handleSubmit.bind(_this);
     _this.updateCategories = _this.updateCategories.bind(_this);
@@ -43,19 +48,16 @@ var TransactionForm = function (_React$Component) {
   }, {
     key: 'updateCategories',
     value: function updateCategories(e) {
-      var income = ['paycheck', 'cash'];
-      var bill = ['rent', 'utilities'];
-      var expense = ['food', 'entertainment'];
-      var newCategories = income;
+      var newCategories = this.categoryTypes.income;
       switch (e.target.value) {
         case 'income':
-          newCategories = income;
+          newCategories = this.categoryTypes.income;
           break;
         case 'bill':
-          newCategories = bill;
+          newCategories = this.categoryTypes.bill;
           break;
         case 'expense':
-          newCategories = expense;
+          newCategories = this.categoryTypes.expense;
           break;
       }
 
@@ -150,7 +152,7 @@ var TransactionForm = function (_React$Component) {
       //error check
 
       sendAjax('POST', $("#transactionForm").attr("action"), $("#transactionForm").serialize(), function () {
-        loadDrinksFromServer();
+        getAllTransactions();
       });
 
       return false;
@@ -162,8 +164,96 @@ var TransactionForm = function (_React$Component) {
 
 ;
 
+var TransactionList = function (_React$Component2) {
+  _inherits(TransactionList, _React$Component2);
+
+  function TransactionList(props) {
+    _classCallCheck(this, TransactionList);
+
+    return _possibleConstructorReturn(this, (TransactionList.__proto__ || Object.getPrototypeOf(TransactionList)).call(this, props));
+  }
+
+  _createClass(TransactionList, [{
+    key: 'render',
+    value: function render() {
+      if (this.props.transactions.length === 0) {
+        return React.createElement(
+          'div',
+          { className: 'transactionList' },
+          React.createElement(
+            'h1',
+            null,
+            'All Transactions'
+          ),
+          React.createElement(
+            'h3',
+            { className: 'emptyTransaction' },
+            'No transactions yet'
+          )
+        );
+      }
+
+      var transactionNodes = this.props.transactions.map(function (t) {
+        return React.createElement(
+          'div',
+          { key: t._id, className: 'transaction' },
+          React.createElement(
+            'h3',
+            { className: 'transactionName' },
+            'Name: ',
+            t.name
+          ),
+          React.createElement(
+            'p',
+            { className: 'transactionAmount' },
+            '$: ',
+            t.amount
+          ),
+          React.createElement(
+            'p',
+            { className: 'transactionType' },
+            'Type: ',
+            t.type
+          ),
+          React.createElement(
+            'p',
+            { className: 'transactionCategory' },
+            'Category: ',
+            t.category
+          )
+        );
+      });
+
+      return React.createElement(
+        'div',
+        { className: 'transactionList' },
+        React.createElement(
+          'h1',
+          null,
+          'All Transactions'
+        ),
+        transactionNodes
+      );
+    }
+  }]);
+
+  return TransactionList;
+}(React.Component);
+
+;
+
+var getAllTransactions = function getAllTransactions() {
+  sendAjax('GET', '/getTransactions', null, function (data) {
+    ReactDOM.render(React.createElement(TransactionList, { transactions: data.transactions }), document.querySelector("#transactionList"));
+  });
+};
+
 var setup = function setup(csrf) {
   ReactDOM.render(React.createElement(TransactionForm, { csrf: csrf }), document.querySelector("#addTransaction"));
+
+  ReactDOM.render(React.createElement(TransactionList, { transactions: [] }), document.querySelector("#transactionList"));
+
+  getAllTransactions();
 };
 
 var getToken = function getToken() {
