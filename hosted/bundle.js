@@ -22,10 +22,12 @@ var TransactionForm = function (_React$Component) {
       name: '',
       amount: 0,
       type: "income",
-      category: ''
+      category: '',
+      categories: ['paycheck', 'cash']
     };
     _this.handleInputChange = _this.handleInputChange.bind(_this);
     _this.handleSubmit = _this.handleSubmit.bind(_this);
+    _this.updateCategories = _this.updateCategories.bind(_this);
     return _this;
   }
 
@@ -37,6 +39,29 @@ var TransactionForm = function (_React$Component) {
       var name = target.name;
 
       this.setState(_defineProperty({}, name, value));
+    }
+  }, {
+    key: 'updateCategories',
+    value: function updateCategories(e) {
+      var income = ['paycheck', 'cash'];
+      var bill = ['rent', 'utilities'];
+      var expense = ['food', 'entertainment'];
+      var newCategories = income;
+      switch (e.target.value) {
+        case 'income':
+          newCategories = income;
+          break;
+        case 'bill':
+          newCategories = bill;
+          break;
+        case 'expense':
+          newCategories = expense;
+          break;
+      }
+
+      this.setState({
+        type: e.target.value,
+        categories: newCategories });
     }
   }, {
     key: 'render',
@@ -66,7 +91,7 @@ var TransactionForm = function (_React$Component) {
           ),
           React.createElement(
             'select',
-            { id: 'transactionType', value: this.state.type, onChange: this.handleChange, name: 'type' },
+            { id: 'transactionType', value: this.state.type, onChange: this.updateCategories, name: 'type' },
             React.createElement(
               'option',
               { value: 'income' },
@@ -90,8 +115,15 @@ var TransactionForm = function (_React$Component) {
           ),
           React.createElement(
             'select',
-            { id: 'transactionCategory', value: this.state.category, onChange: this.handleChange, name: 'category' },
-            React.createElement(TransactionCategoryOptions, { type: this.state.type })
+            { id: 'transactionCategory', value: this.state.category, onChange: this.handleInputChange, name: 'category' },
+            this.state.categories.map(function (category) {
+              return React.createElement(
+                'option',
+                { value: category },
+                category.charAt(0).toUpperCase(),
+                category.slice(1)
+              );
+            })
           ),
           React.createElement(
             'label',
@@ -126,87 +158,6 @@ var TransactionForm = function (_React$Component) {
   }]);
 
   return TransactionForm;
-}(React.Component);
-
-;
-
-var TransactionCategoryOptions = function (_React$Component2) {
-  _inherits(TransactionCategoryOptions, _React$Component2);
-
-  function TransactionCategoryOptions(props) {
-    _classCallCheck(this, TransactionCategoryOptions);
-
-    return _possibleConstructorReturn(this, (TransactionCategoryOptions.__proto__ || Object.getPrototypeOf(TransactionCategoryOptions)).call(this, props));
-  }
-
-  _createClass(TransactionCategoryOptions, [{
-    key: 'render',
-    value: function render() {
-      switch (this.props.type) {
-        case "income":
-          return React.createElement(
-            'div',
-            null,
-            React.createElement(
-              'option',
-              { value: 'paycheck' },
-              'Paycheck'
-            ),
-            React.createElement(
-              'option',
-              { value: 'cash' },
-              'Cash'
-            )
-          );
-          break;
-        case "bill":
-          return React.createElement(
-            'div',
-            null,
-            React.createElement(
-              'option',
-              { value: 'rent' },
-              'Rent'
-            ),
-            React.createElement(
-              'option',
-              { value: 'utilities' },
-              'Utilities'
-            )
-          );
-          break;
-        case "expense":
-          return React.createElement(
-            'div',
-            null,
-            React.createElement(
-              'option',
-              { value: 'food' },
-              'Food'
-            ),
-            React.createElement(
-              'option',
-              { value: 'entertainment' },
-              'Entertainment'
-            )
-          );
-          break;
-        default:
-          return React.createElement(
-            'div',
-            null,
-            React.createElement(
-              'option',
-              { value: '?' },
-              '?'
-            )
-          );
-          break;
-      };
-    }
-  }]);
-
-  return TransactionCategoryOptions;
 }(React.Component);
 
 ;

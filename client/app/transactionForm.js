@@ -6,9 +6,11 @@ class TransactionForm extends React.Component {
       amount: 0,
       type: "income",
       category: '', 
+      categories: ['paycheck', 'cash'],
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.updateCategories = this.updateCategories.bind(this);
 	};
 
 	handleInputChange(event) {
@@ -19,6 +21,28 @@ class TransactionForm extends React.Component {
     this.setState({
       [name]: value
     });
+  };
+
+  updateCategories(e){
+    const income = ['paycheck', 'cash'];
+    const bill = ['rent', 'utilities'];
+    const expense = ['food', 'entertainment'];
+    let newCategories = income;
+    switch(e.target.value){
+      case 'income':
+        newCategories = income;
+        break;
+      case 'bill':
+        newCategories = bill;
+        break;
+      case 'expense':
+        newCategories = expense;
+        break;
+    }
+
+    this.setState({
+      type: e.target.value, 
+      categories: newCategories});
   };
   
   render() { return ( <div>
@@ -37,7 +61,7 @@ class TransactionForm extends React.Component {
 			<label htmlFor="type">
         Transaction Type
       </label>
-			<select id="transactionType" value={this.state.type} onChange={this.handleChange} name="type">
+			<select id="transactionType" value={this.state.type} onChange={this.updateCategories} name="type">
         <option value="income">Income</option>
         <option value="bill">Bill</option>
         <option value="expense">Expense</option>
@@ -46,10 +70,11 @@ class TransactionForm extends React.Component {
 			<label htmlFor="category">
         Transaction Type
       </label>
-			<select id="transactionCategory" value={this.state.category} onChange={this.handleChange} name="category">
-        <TransactionCategoryOptions type={this.state.type}/>
+			<select id="transactionCategory" value={this.state.category} onChange={this.handleInputChange} name="category">
+        {this.state.categories.map(function(category){
+          return (<option value={category}>{category.charAt(0).toUpperCase()}{category.slice(1)}</option>);
+        })}        
       </select>
-
       <label htmlFor="amount">
         $ Amount
       </label>
@@ -76,39 +101,6 @@ class TransactionForm extends React.Component {
     });
   
     return false;
-  };
-};
-
-class TransactionCategoryOptions extends React.Component {
-  constructor(props) {
-    super(props);
-  };
-  render() {
-    switch (this.props.type) {
-      case "income":
-        return (<div>
-          <option value="paycheck">Paycheck</option>
-          <option value="cash">Cash</option>
-        </div>);
-        break;
-      case "bill":
-        return (<div>
-          <option value="rent">Rent</option>
-          <option value="utilities">Utilities</option>
-        </div>);
-        break;
-      case "expense":
-        return (<div>
-          <option value="food">Food</option>
-          <option value="entertainment">Entertainment</option>
-        </div>);
-        break;
-      default:
-        return (<div>
-          <option value="?">?</option>
-        </div>);
-        break;
-    };
   };
 };
 
