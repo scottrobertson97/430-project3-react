@@ -51,6 +51,9 @@ const router = (app) => {
   // app.get('/maker', mid.requiresSecure, mid.requiresLogin, controllers.Drink.makerPage);
   // app.post('/maker', mid.requiresSecure, mid.requiresLogin, controllers.Drink.make);
   // app.get('/allDrinks', mid.requiresSecure, mid.requiresLogin, controllers.Drink.allDrinksPage);
+
+  // 404 page
+  app.get('*', (req, res) => res.status(404).render('404'));
 };
 
 module.exports = router;
