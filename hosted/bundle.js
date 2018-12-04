@@ -242,9 +242,53 @@ var TransactionList = function (_React$Component2) {
 
 ;
 
+var CapitalView = function (_React$Component3) {
+  _inherits(CapitalView, _React$Component3);
+
+  function CapitalView(props) {
+    _classCallCheck(this, CapitalView);
+
+    var _this3 = _possibleConstructorReturn(this, (CapitalView.__proto__ || Object.getPrototypeOf(CapitalView)).call(this, props));
+
+    _this3.addTransactions = _this3.addTransactions.bind(_this3);
+    return _this3;
+  }
+
+  _createClass(CapitalView, [{
+    key: 'addTransactions',
+    value: function addTransactions() {
+      var total = 0;
+      this.props.transactions.map(function (t) {
+        if (t.type == 'income') total += t.amount;else total -= t.amount;
+      });
+      return total;
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'h1',
+          null,
+          'Capital : ',
+          this.addTransactions()
+        )
+      );
+    }
+  }]);
+
+  return CapitalView;
+}(React.Component);
+
+;
+
 var getAllTransactions = function getAllTransactions() {
   sendAjax('GET', '/getTransactions', null, function (data) {
     ReactDOM.render(React.createElement(TransactionList, { transactions: data.transactions }), document.querySelector("#transactionList"));
+
+    ReactDOM.render(React.createElement(CapitalView, { transactions: data.transactions }), document.querySelector("#capitalView"));
   });
 };
 
@@ -252,6 +296,8 @@ var setup = function setup(csrf) {
   ReactDOM.render(React.createElement(TransactionForm, { csrf: csrf }), document.querySelector("#addTransaction"));
 
   ReactDOM.render(React.createElement(TransactionList, { transactions: [] }), document.querySelector("#transactionList"));
+
+  ReactDOM.render(React.createElement(CapitalView, { transactions: [] }), document.querySelector("#capitalView"));
 
   getAllTransactions();
 };

@@ -2,7 +2,7 @@ ToDo ☐☑☒
 
 ☐ Views
   ☑ input income/bill/expense
-  ☐ dynamic view of capital ($)
+  ☑ dynamic view of capital ($)
   ☑ list all transactions
   ☐ list expenses
   ☐ chart of area of spending

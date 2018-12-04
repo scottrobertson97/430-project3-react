@@ -137,11 +137,42 @@ class TransactionList extends React.Component {
   };
 };
 
+class CapitalView extends React.Component {
+  constructor(props) {
+    super(props);
+    this.addTransactions = this.addTransactions.bind(this);
+  };
+
+  addTransactions() {
+    let total = 0;
+    this.props.transactions.map(function(t){
+      if (t.type == 'income')
+        total+=t.amount;
+      else
+        total-=t.amount;
+    });
+    return total;
+  };
+
+  render() { 
+    return (
+      <div>
+        <h1>Capital : {this.addTransactions()}</h1>    
+      </div>
+    );
+  };
+};
+
 const getAllTransactions = () => {
   sendAjax('GET', '/getTransactions', null, (data) => {
     ReactDOM.render(
       <TransactionList transactions={data.transactions} />,
       document.querySelector("#transactionList")
+    );
+
+    ReactDOM.render(
+      <CapitalView transactions={data.transactions} />,
+      document.querySelector("#capitalView")
     );
   });
 };
@@ -155,6 +186,11 @@ const setup = function(csrf) {
   ReactDOM.render(
     <TransactionList transactions={[]} />,
     document.querySelector("#transactionList")
+  );
+
+  ReactDOM.render(
+    <CapitalView transactions={[]} />,
+    document.querySelector("#capitalView")
   );
 
   getAllTransactions();
