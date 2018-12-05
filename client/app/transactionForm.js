@@ -163,6 +163,34 @@ class CapitalView extends React.Component {
   };
 };
 
+class ExpenseChartView extends React.Component{
+  constructor(props) {
+    super(props);
+  };
+
+  componentDidMount() {
+    const canvas = this.refs.canvas;
+    canvas.height = 300;
+    canvas.width = 300;
+    const ctx = canvas.getContext("2d");
+    const img = this.refs.image;
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0);
+      ctx.font = "40px Courier";
+      ctx.fillText("Hello World", 0, 20);
+    };
+  }
+
+  render() {
+    return(
+      <div>
+        <canvas ref="canvas" width={640} height={425} />
+        <img ref="image" src="https://www.craftycookingmama.com/wp-content/uploads/2017/12/070.jpg" className="hidden"/>
+      </div>
+    );
+  };
+};
+
 const getAllTransactions = () => {
   sendAjax('GET', '/getTransactions', null, (data) => {
     ReactDOM.render(
@@ -191,6 +219,11 @@ const setup = function(csrf) {
   ReactDOM.render(
     <CapitalView transactions={[]} />,
     document.querySelector("#capitalView")
+  );
+
+  ReactDOM.render(
+    <ExpenseChartView />,
+    document.querySelector("#expenseChartView")
   );
 
   getAllTransactions();

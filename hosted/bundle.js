@@ -284,6 +284,46 @@ var CapitalView = function (_React$Component3) {
 
 ;
 
+var ExpenseChartView = function (_React$Component4) {
+  _inherits(ExpenseChartView, _React$Component4);
+
+  function ExpenseChartView(props) {
+    _classCallCheck(this, ExpenseChartView);
+
+    return _possibleConstructorReturn(this, (ExpenseChartView.__proto__ || Object.getPrototypeOf(ExpenseChartView)).call(this, props));
+  }
+
+  _createClass(ExpenseChartView, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var canvas = this.refs.canvas;
+      canvas.height = 300;
+      canvas.width = 300;
+      var ctx = canvas.getContext("2d");
+      var img = this.refs.image;
+      img.onload = function () {
+        ctx.drawImage(img, 0, 0);
+        ctx.font = "40px Courier";
+        ctx.fillText("Hello World", 0, 20);
+      };
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        null,
+        React.createElement('canvas', { ref: 'canvas', width: 640, height: 425 }),
+        React.createElement('img', { ref: 'image', src: 'https://www.craftycookingmama.com/wp-content/uploads/2017/12/070.jpg', className: 'hidden' })
+      );
+    }
+  }]);
+
+  return ExpenseChartView;
+}(React.Component);
+
+;
+
 var getAllTransactions = function getAllTransactions() {
   sendAjax('GET', '/getTransactions', null, function (data) {
     ReactDOM.render(React.createElement(TransactionList, { transactions: data.transactions }), document.querySelector("#transactionList"));
@@ -298,6 +338,8 @@ var setup = function setup(csrf) {
   ReactDOM.render(React.createElement(TransactionList, { transactions: [] }), document.querySelector("#transactionList"));
 
   ReactDOM.render(React.createElement(CapitalView, { transactions: [] }), document.querySelector("#capitalView"));
+
+  ReactDOM.render(React.createElement(ExpenseChartView, null), document.querySelector("#expenseChartView"));
 
   getAllTransactions();
 };
