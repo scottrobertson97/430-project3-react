@@ -1,3 +1,9 @@
+const TRANSACTIONS = {
+  income: ['paycheck', 'cash'],
+  bill: ['rent', 'utilities'],
+  expense: ['food', 'entertainment'],
+};
+
 class TransactionForm extends React.Component {
   constructor(props) {
     super(props);
@@ -6,12 +12,7 @@ class TransactionForm extends React.Component {
       amount: 0,
       type: "income",
       category: '', 
-      categories: ['paycheck', 'cash'],
-    };
-    this.categoryTypes = {
-      income: ['paycheck', 'cash'],
-      bill: ['rent', 'utilities'],
-      expense: ['food', 'entertainment'],
+      categories: TRANSACTIONS.income,
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -29,16 +30,16 @@ class TransactionForm extends React.Component {
   };
 
   updateCategories(e){
-    let newCategories = this.categoryTypes.income;
+    let newCategories = TRANSACTIONS.income;
     switch(e.target.value){
       case 'income':
-        newCategories = this.categoryTypes.income;
+        newCategories = TRANSACTIONS.income;
         break;
       case 'bill':
-        newCategories = this.categoryTypes.bill;
+        newCategories = TRANSACTIONS.bill;
         break;
       case 'expense':
-        newCategories = this.categoryTypes.expense;
+        newCategories = TRANSACTIONS.expense;
         break;
     }
 
@@ -145,7 +146,7 @@ class CapitalView extends React.Component {
 
   addTransactions() {
     let total = 0;
-    this.props.transactions.map(function(t){
+    this.props.transactions.forEach(t => {
       if (t.type == 'income')
         total+=t.amount;
       else
@@ -166,25 +167,74 @@ class CapitalView extends React.Component {
 class ExpenseChartView extends React.Component{
   constructor(props) {
     super(props);
-  };
 
+    this.drawPieSlice = this.drawPieSlice.bind(this);
+    this.getDataPercentages = this.getDataPercentages.bind(this);
+    this.updateCanvas = this.updateCanvas.bind(this);
+  };  
+
+  // https://blog.lavrton.com/using-react-with-html5-canvas-871d07d8d753
+  // react with html5 canvas
   componentDidMount() {
+    this.updateCanvas();
+  }
+
+  componentDidUpdate() {
+    this.updateCanvas();
+  }
+
+  // https://blog.cloudboost.io/using-html5-canvas-with-react-ff7d93f5dc76
+  // for drawing to a canvas in react
+  updateCanvas() {
     const canvas = this.refs.canvas;
-    canvas.height = 300;
-    canvas.width = 300;
     const ctx = canvas.getContext("2d");
-    const img = this.refs.image;
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0);
-      ctx.font = "40px Courier";
-      ctx.fillText("Hello World", 0, 20);
-    };
+
+    const data = this.getDataPercentages();
+    let total = 0;
+    let startAngle = -0.5 * Math.PI;
+
+    //get total expenses
+    TRANSACTIONS.expense.forEach(category => {
+      total += data[category];
+    });
+
+    //color in the slices of the pie
+    TRANSACTIONS.expense.forEach(category => {
+      let rads = (data[category] / total) * 2 * Math.PI;
+      this.drawPieSlice (ctx, 150, 150, 100, startAngle, startAngle + rads, `rgb(${Math.random() * 256}, ${Math.random() * 256}, ${Math.random() * 256})`);
+      startAngle += rads;
+    });
+  }
+
+  // https://code.tutsplus.com/tutorials/how-to-draw-a-pie-chart-and-doughnut-chart-using-javascript-and-html5-canvas--cms-27197
+  // for drawing a pie chart with
+  drawPieSlice(ctx,centerX, centerY, radius, startAngle, endAngle, color ){
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(centerX,centerY);
+    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  getDataPercentages(){
+    let data = [];
+    TRANSACTIONS.expense.forEach(category => {
+      data[category] = 0;
+    });
+    this.props.transactions.forEach(t => {      
+      if (t.type == 'expense'){        
+        data[t.category] += t.amount;
+      }
+    });
+    console.dir(data);
+    return data;
   }
 
   render() {
     return(
       <div>
-        <canvas ref="canvas" width={640} height={425} />
+        <canvas ref="canvas" width={300} height={300} />
         <img ref="image" src="https://www.craftycookingmama.com/wp-content/uploads/2017/12/070.jpg" className="hidden"/>
       </div>
     );
@@ -193,6 +243,7 @@ class ExpenseChartView extends React.Component{
 
 const getAllTransactions = () => {
   sendAjax('GET', '/getTransactions', null, (data) => {
+
     ReactDOM.render(
       <TransactionList transactions={data.transactions} />,
       document.querySelector("#transactionList")
@@ -201,6 +252,11 @@ const getAllTransactions = () => {
     ReactDOM.render(
       <CapitalView transactions={data.transactions} />,
       document.querySelector("#capitalView")
+    );
+
+    ReactDOM.render(
+      <ExpenseChartView transactions={data.transactions} />,
+      document.querySelector("#expenseChartView")
     );
   });
 };
@@ -222,7 +278,7 @@ const setup = function(csrf) {
   );
 
   ReactDOM.render(
-    <ExpenseChartView />,
+    <ExpenseChartView transactions={[]}/>,
     document.querySelector("#expenseChartView")
   );
 

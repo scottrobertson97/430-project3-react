@@ -10,6 +10,12 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var TRANSACTIONS = {
+  income: ['paycheck', 'cash'],
+  bill: ['rent', 'utilities'],
+  expense: ['food', 'entertainment']
+};
+
 var TransactionForm = function (_React$Component) {
   _inherits(TransactionForm, _React$Component);
 
@@ -23,12 +29,7 @@ var TransactionForm = function (_React$Component) {
       amount: 0,
       type: "income",
       category: '',
-      categories: ['paycheck', 'cash']
-    };
-    _this.categoryTypes = {
-      income: ['paycheck', 'cash'],
-      bill: ['rent', 'utilities'],
-      expense: ['food', 'entertainment']
+      categories: TRANSACTIONS.income
     };
     _this.handleInputChange = _this.handleInputChange.bind(_this);
     _this.handleSubmit = _this.handleSubmit.bind(_this);
@@ -48,16 +49,16 @@ var TransactionForm = function (_React$Component) {
   }, {
     key: 'updateCategories',
     value: function updateCategories(e) {
-      var newCategories = this.categoryTypes.income;
+      var newCategories = TRANSACTIONS.income;
       switch (e.target.value) {
         case 'income':
-          newCategories = this.categoryTypes.income;
+          newCategories = TRANSACTIONS.income;
           break;
         case 'bill':
-          newCategories = this.categoryTypes.bill;
+          newCategories = TRANSACTIONS.bill;
           break;
         case 'expense':
-          newCategories = this.categoryTypes.expense;
+          newCategories = TRANSACTIONS.expense;
           break;
       }
 
@@ -258,7 +259,7 @@ var CapitalView = function (_React$Component3) {
     key: 'addTransactions',
     value: function addTransactions() {
       var total = 0;
-      this.props.transactions.map(function (t) {
+      this.props.transactions.forEach(function (t) {
         if (t.type == 'income') total += t.amount;else total -= t.amount;
       });
       return total;
@@ -290,22 +291,84 @@ var ExpenseChartView = function (_React$Component4) {
   function ExpenseChartView(props) {
     _classCallCheck(this, ExpenseChartView);
 
-    return _possibleConstructorReturn(this, (ExpenseChartView.__proto__ || Object.getPrototypeOf(ExpenseChartView)).call(this, props));
+    var _this4 = _possibleConstructorReturn(this, (ExpenseChartView.__proto__ || Object.getPrototypeOf(ExpenseChartView)).call(this, props));
+
+    _this4.drawPieSlice = _this4.drawPieSlice.bind(_this4);
+    _this4.getDataPercentages = _this4.getDataPercentages.bind(_this4);
+    _this4.updateCanvas = _this4.updateCanvas.bind(_this4);
+    return _this4;
   }
 
   _createClass(ExpenseChartView, [{
     key: 'componentDidMount',
+
+
+    // https://blog.lavrton.com/using-react-with-html5-canvas-871d07d8d753
+    // react with html5 canvas
     value: function componentDidMount() {
+      this.updateCanvas();
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
+      this.updateCanvas();
+    }
+
+    // https://blog.cloudboost.io/using-html5-canvas-with-react-ff7d93f5dc76
+    // for drawing to a canvas in react
+
+  }, {
+    key: 'updateCanvas',
+    value: function updateCanvas() {
+      var _this5 = this;
+
       var canvas = this.refs.canvas;
-      canvas.height = 300;
-      canvas.width = 300;
       var ctx = canvas.getContext("2d");
-      var img = this.refs.image;
-      img.onload = function () {
-        ctx.drawImage(img, 0, 0);
-        ctx.font = "40px Courier";
-        ctx.fillText("Hello World", 0, 20);
-      };
+
+      var data = this.getDataPercentages();
+      var total = 0;
+      var startAngle = -0.5 * Math.PI;
+
+      //get total expenses
+      TRANSACTIONS.expense.forEach(function (category) {
+        total += data[category];
+      });
+
+      //color in the slices of the pie
+      TRANSACTIONS.expense.forEach(function (category) {
+        var rads = data[category] / total * 2 * Math.PI;
+        _this5.drawPieSlice(ctx, 150, 150, 100, startAngle, startAngle + rads, 'rgb(' + Math.random() * 256 + ', ' + Math.random() * 256 + ', ' + Math.random() * 256 + ')');
+        startAngle += rads;
+      });
+    }
+
+    // https://code.tutsplus.com/tutorials/how-to-draw-a-pie-chart-and-doughnut-chart-using-javascript-and-html5-canvas--cms-27197
+    // for drawing a pie chart with
+
+  }, {
+    key: 'drawPieSlice',
+    value: function drawPieSlice(ctx, centerX, centerY, radius, startAngle, endAngle, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }, {
+    key: 'getDataPercentages',
+    value: function getDataPercentages() {
+      var data = [];
+      TRANSACTIONS.expense.forEach(function (category) {
+        data[category] = 0;
+      });
+      this.props.transactions.forEach(function (t) {
+        if (t.type == 'expense') {
+          data[t.category] += t.amount;
+        }
+      });
+      console.dir(data);
+      return data;
     }
   }, {
     key: 'render',
@@ -313,7 +376,7 @@ var ExpenseChartView = function (_React$Component4) {
       return React.createElement(
         'div',
         null,
-        React.createElement('canvas', { ref: 'canvas', width: 640, height: 425 }),
+        React.createElement('canvas', { ref: 'canvas', width: 300, height: 300 }),
         React.createElement('img', { ref: 'image', src: 'https://www.craftycookingmama.com/wp-content/uploads/2017/12/070.jpg', className: 'hidden' })
       );
     }
@@ -326,9 +389,12 @@ var ExpenseChartView = function (_React$Component4) {
 
 var getAllTransactions = function getAllTransactions() {
   sendAjax('GET', '/getTransactions', null, function (data) {
+
     ReactDOM.render(React.createElement(TransactionList, { transactions: data.transactions }), document.querySelector("#transactionList"));
 
     ReactDOM.render(React.createElement(CapitalView, { transactions: data.transactions }), document.querySelector("#capitalView"));
+
+    ReactDOM.render(React.createElement(ExpenseChartView, { transactions: data.transactions }), document.querySelector("#expenseChartView"));
   });
 };
 
@@ -339,7 +405,7 @@ var setup = function setup(csrf) {
 
   ReactDOM.render(React.createElement(CapitalView, { transactions: [] }), document.querySelector("#capitalView"));
 
-  ReactDOM.render(React.createElement(ExpenseChartView, null), document.querySelector("#expenseChartView"));
+  ReactDOM.render(React.createElement(ExpenseChartView, { transactions: [] }), document.querySelector("#expenseChartView"));
 
   getAllTransactions();
 };
