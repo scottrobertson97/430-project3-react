@@ -8,7 +8,10 @@ const COLORS = [
   "#E94848",
   "#99E948",
   "#48E9E9",
-  "#9948E9"
+  "#9948E9",
+  "#E98548",
+  "#4891E9",
+  "#48E9A4"
 ];
 
 class TransactionForm extends React.Component {
@@ -139,7 +142,7 @@ class TransactionList extends React.Component {
     }
 
     const transactionNodes = this.props.transactions.map(function(t){
-      return (<div key={t._id} className="transaction">        
+      return (<div key={t._id} className="transaction col">        
         <h3 className="transactionName">Name: {t.name}</h3>
         <p className="transactionAmount">$: {t.amount}</p>
         <p className="transactionType">Type: {t.type}</p>  
@@ -174,7 +177,7 @@ class CapitalView extends React.Component {
   render() { 
     return (
       <div>
-        <h1>Capital : {this.addTransactions()}</h1>    
+        <h1>Current Balance: ${this.addTransactions()}</h1>    
       </div>
     );
   };
@@ -188,6 +191,7 @@ class ExpenseChartView extends React.Component{
     this.getDataPercentages = this.getDataPercentages.bind(this);
     this.updateCanvas = this.updateCanvas.bind(this);
     this.drawPercent = this.drawPercent.bind(this);
+    this.drawKey = this.drawKey.bind(this);
   };  
 
   // https://blog.lavrton.com/using-react-with-html5-canvas-871d07d8d753
@@ -223,9 +227,8 @@ class ExpenseChartView extends React.Component{
       const rads = percentage * 2 * Math.PI;
       this.drawPieSlice (ctx, 150, 150, 140, startAngle, startAngle + rads, COLORS[colorIndex]);
       this.drawPercent(ctx, startAngle + (0.5 * rads), Math.round(percentage*100));
+      this.drawKey(ctx, colorIndex, category);
       colorIndex++;
-      if (colorIndex >= COLORS.length)
-        colorIndex = 0;
       startAngle += rads;
     });
 
@@ -235,18 +238,32 @@ class ExpenseChartView extends React.Component{
   // https://code.tutsplus.com/tutorials/how-to-draw-a-pie-chart-and-doughnut-chart-using-javascript-and-html5-canvas--cms-27197
   // for drawing a pie chart with canvas
   drawPieSlice(ctx,centerX, centerY, radius, startAngle, endAngle, color ){
+    ctx.save();
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.moveTo(centerX,centerY);
     ctx.arc(centerX, centerY, radius, startAngle, endAngle);
     ctx.closePath();
     ctx.fill();
+    ctx.restore();
+  }
+
+  drawKey(ctx, colorIndex, label){
+    ctx.save();
+    ctx.fillStyle = COLORS[colorIndex];
+    const x = 10;
+    const y = 300 + (colorIndex * 30);
+    ctx.fillRect(x, y, 20, 20); 
+    ctx.fillStyle = "black";
+    ctx.font = "bold 15px sans-serif";
+    ctx.fillText(`${label.charAt(0).toUpperCase()}${label.slice(1)}`, x + 25, y + 15);
+    ctx.restore();
   }
 
   drawPercent(ctx, middleAngle, percentage) {
     ctx.save();
-    var x = 100 * Math.cos(middleAngle) + 130;
-    var y = 100 * Math.sin(middleAngle) + 160;
+    const x = 100 * Math.cos(middleAngle) + 130;
+    const y = 100 * Math.sin(middleAngle) + 160;
     ctx.fillStyle = "White";
     ctx.font = "bold 20px sans-serif";
     ctx.fillText(`${percentage}%`, x, y);
@@ -269,8 +286,8 @@ class ExpenseChartView extends React.Component{
   render() {
     return(
       <div>
-        <canvas ref="canvas" width={300} height={300} />
-        <img ref="image" src="https://www.craftycookingmama.com/wp-content/uploads/2017/12/070.jpg" className="hidden"/>
+        <h1>Expenses Ratio</h1>
+        <canvas ref="canvas" width={300} height={450} />        
       </div>
     );
   };

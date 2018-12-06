@@ -9,3 +9,8 @@ form {
 label {
   margin-right: 10px;
 }
+
+.navlink a{
+  text-decoration: none;
+  color: white;
+}

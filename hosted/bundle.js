@@ -16,7 +16,7 @@ var TRANSACTIONS = {
   expense: ['food', 'entertainment', 'shopping']
 };
 
-var COLORS = ["#E94848", "#99E948", "#48E9E9", "#9948E9"];
+var COLORS = ["#E94848", "#99E948", "#48E9E9", "#9948E9", "#E98548", "#4891E9", "#48E9A4"];
 
 var TransactionForm = function (_React$Component) {
   _inherits(TransactionForm, _React$Component);
@@ -203,7 +203,7 @@ var TransactionList = function (_React$Component2) {
       var transactionNodes = this.props.transactions.map(function (t) {
         return React.createElement(
           'div',
-          { key: t._id, className: 'transaction' },
+          { key: t._id, className: 'transaction col' },
           React.createElement(
             'h3',
             { className: 'transactionName' },
@@ -279,7 +279,7 @@ var CapitalView = function (_React$Component3) {
         React.createElement(
           'h1',
           null,
-          'Capital : ',
+          'Current Balance: $',
           this.addTransactions()
         )
       );
@@ -303,6 +303,7 @@ var ExpenseChartView = function (_React$Component4) {
     _this4.getDataPercentages = _this4.getDataPercentages.bind(_this4);
     _this4.updateCanvas = _this4.updateCanvas.bind(_this4);
     _this4.drawPercent = _this4.drawPercent.bind(_this4);
+    _this4.drawKey = _this4.drawKey.bind(_this4);
     return _this4;
   }
 
@@ -349,8 +350,8 @@ var ExpenseChartView = function (_React$Component4) {
         var rads = percentage * 2 * Math.PI;
         _this5.drawPieSlice(ctx, 150, 150, 140, startAngle, startAngle + rads, COLORS[colorIndex]);
         _this5.drawPercent(ctx, startAngle + 0.5 * rads, Math.round(percentage * 100));
+        _this5.drawKey(ctx, colorIndex, category);
         colorIndex++;
-        if (colorIndex >= COLORS.length) colorIndex = 0;
         startAngle += rads;
       });
 
@@ -363,12 +364,27 @@ var ExpenseChartView = function (_React$Component4) {
   }, {
     key: 'drawPieSlice',
     value: function drawPieSlice(ctx, centerX, centerY, radius, startAngle, endAngle, color) {
+      ctx.save();
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.arc(centerX, centerY, radius, startAngle, endAngle);
       ctx.closePath();
       ctx.fill();
+      ctx.restore();
+    }
+  }, {
+    key: 'drawKey',
+    value: function drawKey(ctx, colorIndex, label) {
+      ctx.save();
+      ctx.fillStyle = COLORS[colorIndex];
+      var x = 10;
+      var y = 300 + colorIndex * 30;
+      ctx.fillRect(x, y, 20, 20);
+      ctx.fillStyle = "black";
+      ctx.font = "bold 15px sans-serif";
+      ctx.fillText('' + label.charAt(0).toUpperCase() + label.slice(1), x + 25, y + 15);
+      ctx.restore();
     }
   }, {
     key: 'drawPercent',
@@ -401,8 +417,12 @@ var ExpenseChartView = function (_React$Component4) {
       return React.createElement(
         'div',
         null,
-        React.createElement('canvas', { ref: 'canvas', width: 300, height: 300 }),
-        React.createElement('img', { ref: 'image', src: 'https://www.craftycookingmama.com/wp-content/uploads/2017/12/070.jpg', className: 'hidden' })
+        React.createElement(
+          'h1',
+          null,
+          'Expenses Ratio'
+        ),
+        React.createElement('canvas', { ref: 'canvas', width: 300, height: 450 })
       );
     }
   }]);
