@@ -6,6 +6,8 @@ ToDo ☐☑☒
   ☑ list all transactions
   ☐ list expenses
   ☐ chart of area of spending
+    ☑ draw pie chart
+    ☐ draw key
   ☐ bar of spending out of income
 
 ☐ Pages

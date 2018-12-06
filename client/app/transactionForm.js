@@ -1,8 +1,15 @@
 const TRANSACTIONS = {
   income: ['paycheck', 'cash'],
   bill: ['rent', 'utilities'],
-  expense: ['food', 'entertainment'],
+  expense: ['food', 'entertainment', 'shopping'],
 };
+
+const COLORS = [
+  "#E94848",
+  "#99E948",
+  "#48E9E9",
+  "#9948E9"
+];
 
 class TransactionForm extends React.Component {
   constructor(props) {
@@ -48,7 +55,7 @@ class TransactionForm extends React.Component {
       categories: newCategories});
   };
   
-  render() { return ( <div>
+  render() { return ( <div className="col">
     <form id="transactionForm" onSubmit={this.handleSubmit}>
       <label htmlFor="name">
         Transaction Name
@@ -61,6 +68,8 @@ class TransactionForm extends React.Component {
 				name="name"
       />
 
+      <br />
+
 			<label htmlFor="type">
         Transaction Type
       </label>
@@ -70,6 +79,8 @@ class TransactionForm extends React.Component {
         <option value="expense">Expense</option>
       </select>
 
+      <br />
+
 			<label htmlFor="category">
         Transaction Type
       </label>
@@ -78,8 +89,11 @@ class TransactionForm extends React.Component {
           return (<option value={category}>{category.charAt(0).toUpperCase()}{category.slice(1)}</option>);
         })}        
       </select>
+      
+      <br />
+
       <label htmlFor="amount">
-        $ Amount
+        Amount
       </label>
 			<input
         type="number"
@@ -88,6 +102,8 @@ class TransactionForm extends React.Component {
 				value={this.state.amount}
 				name="amount"
       />
+
+      <br />
 
       <input type="hidden" name="_csrf" value={this.props.csrf}/>
       <input className="addTransactionSubmit" type="submit" value="Add Transaction"/>
@@ -171,6 +187,7 @@ class ExpenseChartView extends React.Component{
     this.drawPieSlice = this.drawPieSlice.bind(this);
     this.getDataPercentages = this.getDataPercentages.bind(this);
     this.updateCanvas = this.updateCanvas.bind(this);
+    this.drawPercent = this.drawPercent.bind(this);
   };  
 
   // https://blog.lavrton.com/using-react-with-html5-canvas-871d07d8d753
@@ -197,17 +214,26 @@ class ExpenseChartView extends React.Component{
     TRANSACTIONS.expense.forEach(category => {
       total += data[category];
     });
+    
+    let colorIndex = 0;
 
     //color in the slices of the pie
     TRANSACTIONS.expense.forEach(category => {
-      let rads = (data[category] / total) * 2 * Math.PI;
-      this.drawPieSlice (ctx, 150, 150, 100, startAngle, startAngle + rads, `rgb(${Math.random() * 256}, ${Math.random() * 256}, ${Math.random() * 256})`);
+      const percentage = data[category] / total;
+      const rads = percentage * 2 * Math.PI;
+      this.drawPieSlice (ctx, 150, 150, 140, startAngle, startAngle + rads, COLORS[colorIndex]);
+      this.drawPercent(ctx, startAngle + (0.5 * rads), Math.round(percentage*100));
+      colorIndex++;
+      if (colorIndex >= COLORS.length)
+        colorIndex = 0;
       startAngle += rads;
     });
+
+    this.drawPieSlice (ctx, 150, 150, 50, 0, 2 * Math.PI, 'white');
   }
 
   // https://code.tutsplus.com/tutorials/how-to-draw-a-pie-chart-and-doughnut-chart-using-javascript-and-html5-canvas--cms-27197
-  // for drawing a pie chart with
+  // for drawing a pie chart with canvas
   drawPieSlice(ctx,centerX, centerY, radius, startAngle, endAngle, color ){
     ctx.fillStyle = color;
     ctx.beginPath();
@@ -215,6 +241,16 @@ class ExpenseChartView extends React.Component{
     ctx.arc(centerX, centerY, radius, startAngle, endAngle);
     ctx.closePath();
     ctx.fill();
+  }
+
+  drawPercent(ctx, middleAngle, percentage) {
+    ctx.save();
+    var x = 100 * Math.cos(middleAngle) + 130;
+    var y = 100 * Math.sin(middleAngle) + 160;
+    ctx.fillStyle = "White";
+    ctx.font = "bold 20px sans-serif";
+    ctx.fillText(`${percentage}%`, x, y);
+    ctx.restore();
   }
 
   getDataPercentages(){
@@ -227,7 +263,6 @@ class ExpenseChartView extends React.Component{
         data[t.category] += t.amount;
       }
     });
-    console.dir(data);
     return data;
   }
 

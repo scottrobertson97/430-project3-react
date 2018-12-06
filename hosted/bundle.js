@@ -13,8 +13,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var TRANSACTIONS = {
   income: ['paycheck', 'cash'],
   bill: ['rent', 'utilities'],
-  expense: ['food', 'entertainment']
+  expense: ['food', 'entertainment', 'shopping']
 };
+
+var COLORS = ["#E94848", "#99E948", "#48E9E9", "#9948E9"];
 
 var TransactionForm = function (_React$Component) {
   _inherits(TransactionForm, _React$Component);
@@ -71,7 +73,7 @@ var TransactionForm = function (_React$Component) {
     value: function render() {
       return React.createElement(
         'div',
-        null,
+        { className: 'col' },
         React.createElement(
           'form',
           { id: 'transactionForm', onSubmit: this.handleSubmit },
@@ -87,6 +89,7 @@ var TransactionForm = function (_React$Component) {
             value: this.state.name,
             name: 'name'
           }),
+          React.createElement('br', null),
           React.createElement(
             'label',
             { htmlFor: 'type' },
@@ -111,6 +114,7 @@ var TransactionForm = function (_React$Component) {
               'Expense'
             )
           ),
+          React.createElement('br', null),
           React.createElement(
             'label',
             { htmlFor: 'category' },
@@ -128,10 +132,11 @@ var TransactionForm = function (_React$Component) {
               );
             })
           ),
+          React.createElement('br', null),
           React.createElement(
             'label',
             { htmlFor: 'amount' },
-            '$ Amount'
+            'Amount'
           ),
           React.createElement('input', {
             type: 'number',
@@ -140,6 +145,7 @@ var TransactionForm = function (_React$Component) {
             value: this.state.amount,
             name: 'amount'
           }),
+          React.createElement('br', null),
           React.createElement('input', { type: 'hidden', name: '_csrf', value: this.props.csrf }),
           React.createElement('input', { className: 'addTransactionSubmit', type: 'submit', value: 'Add Transaction' })
         )
@@ -296,6 +302,7 @@ var ExpenseChartView = function (_React$Component4) {
     _this4.drawPieSlice = _this4.drawPieSlice.bind(_this4);
     _this4.getDataPercentages = _this4.getDataPercentages.bind(_this4);
     _this4.updateCanvas = _this4.updateCanvas.bind(_this4);
+    _this4.drawPercent = _this4.drawPercent.bind(_this4);
     return _this4;
   }
 
@@ -334,16 +341,24 @@ var ExpenseChartView = function (_React$Component4) {
         total += data[category];
       });
 
+      var colorIndex = 0;
+
       //color in the slices of the pie
       TRANSACTIONS.expense.forEach(function (category) {
-        var rads = data[category] / total * 2 * Math.PI;
-        _this5.drawPieSlice(ctx, 150, 150, 100, startAngle, startAngle + rads, 'rgb(' + Math.random() * 256 + ', ' + Math.random() * 256 + ', ' + Math.random() * 256 + ')');
+        var percentage = data[category] / total;
+        var rads = percentage * 2 * Math.PI;
+        _this5.drawPieSlice(ctx, 150, 150, 140, startAngle, startAngle + rads, COLORS[colorIndex]);
+        _this5.drawPercent(ctx, startAngle + 0.5 * rads, Math.round(percentage * 100));
+        colorIndex++;
+        if (colorIndex >= COLORS.length) colorIndex = 0;
         startAngle += rads;
       });
+
+      this.drawPieSlice(ctx, 150, 150, 50, 0, 2 * Math.PI, 'white');
     }
 
     // https://code.tutsplus.com/tutorials/how-to-draw-a-pie-chart-and-doughnut-chart-using-javascript-and-html5-canvas--cms-27197
-    // for drawing a pie chart with
+    // for drawing a pie chart with canvas
 
   }, {
     key: 'drawPieSlice',
@@ -354,6 +369,17 @@ var ExpenseChartView = function (_React$Component4) {
       ctx.arc(centerX, centerY, radius, startAngle, endAngle);
       ctx.closePath();
       ctx.fill();
+    }
+  }, {
+    key: 'drawPercent',
+    value: function drawPercent(ctx, middleAngle, percentage) {
+      ctx.save();
+      var x = 100 * Math.cos(middleAngle) + 130;
+      var y = 100 * Math.sin(middleAngle) + 160;
+      ctx.fillStyle = "White";
+      ctx.font = "bold 20px sans-serif";
+      ctx.fillText(percentage + '%', x, y);
+      ctx.restore();
     }
   }, {
     key: 'getDataPercentages',
@@ -367,7 +393,6 @@ var ExpenseChartView = function (_React$Component4) {
           data[t.category] += t.amount;
         }
       });
-      console.dir(data);
       return data;
     }
   }, {
