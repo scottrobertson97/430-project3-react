@@ -10,7 +10,28 @@ label {
   margin-right: 10px;
 }
 
-.navlink a{
+.navlink {
   text-decoration: none;
   color: white;
+}
+
+.nav-item {
+  margin-left: 10px;
+}
+
+.navlink:hover {
+  text-decoration: none;
+  color: lightgray;
+}
+
+#errorMessage {
+  color: red;
+}
+
+h3 {
+  font-size: 16pt;
+}
+h1 {
+  font-size: 24pt;
+  text-align: center;
 }

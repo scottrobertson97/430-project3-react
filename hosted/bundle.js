@@ -66,7 +66,8 @@ var TransactionForm = function (_React$Component) {
 
       this.setState({
         type: e.target.value,
-        categories: newCategories });
+        categories: newCategories
+      });
     }
   }, {
     key: 'render',
@@ -156,7 +157,10 @@ var TransactionForm = function (_React$Component) {
     value: function handleSubmit(e) {
       e.preventDefault();
 
-      //error check
+      this.setState({
+        name: '',
+        amount: 0
+      });
 
       sendAjax('POST', $("#transactionForm").attr("action"), $("#transactionForm").serialize(), function () {
         getAllTransactions();
@@ -213,7 +217,7 @@ var TransactionList = function (_React$Component2) {
           React.createElement(
             'p',
             { className: 'transactionAmount' },
-            '$: ',
+            'Amount: $',
             t.amount
           ),
           React.createElement(
@@ -333,6 +337,9 @@ var ExpenseChartView = function (_React$Component4) {
       var canvas = this.refs.canvas;
       var ctx = canvas.getContext("2d");
 
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, 300, 450);
+
       var data = this.getDataPercentages();
       var total = 0;
       var startAngle = -0.5 * Math.PI;
@@ -432,6 +439,67 @@ var ExpenseChartView = function (_React$Component4) {
 
 ;
 
+var SpendingBar = function (_React$Component5) {
+  _inherits(SpendingBar, _React$Component5);
+
+  function SpendingBar(props) {
+    _classCallCheck(this, SpendingBar);
+
+    return _possibleConstructorReturn(this, (SpendingBar.__proto__ || Object.getPrototypeOf(SpendingBar)).call(this, props));
+  }
+
+  _createClass(SpendingBar, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.updateCanvas();
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
+      this.updateCanvas();
+    }
+  }, {
+    key: 'updateCanvas',
+    value: function updateCanvas() {
+      var incomeTotal = 0;
+      var spendingTotal = 0;
+      this.props.transactions.forEach(function (t) {
+        if (t.type == 'income') incomeTotal += t.amount;else spendingTotal += t.amount;
+      });
+
+      var canvas = this.refs.canvas;
+      var ctx = canvas.getContext("2d");
+
+      var biggerTotal = incomeTotal > spendingTotal ? incomeTotal : spendingTotal;
+
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, 300, 50);
+      ctx.fillStyle = "lightgray";
+      ctx.fillRect(0, 0, 200, 20);
+      ctx.fillRect(0, 30, 200, 20);
+      ctx.fillStyle = "#99E948";
+      ctx.fillRect(0, 0, incomeTotal / biggerTotal * 200, 20);
+      ctx.fillStyle = "#E94848";
+      ctx.fillRect(0, 30, spendingTotal / biggerTotal * 200, 20);
+      ctx.fillStyle = "black";
+      ctx.font = "bold 15px sans-serif";
+      ctx.fillText('Earned: $' + incomeTotal, 205, 15);
+      ctx.fillText('Spent: $' + spendingTotal, 205, 45);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        null,
+        React.createElement('canvas', { ref: 'canvas', width: 300, height: 50 })
+      );
+    }
+  }]);
+
+  return SpendingBar;
+}(React.Component);
+
 var getAllTransactions = function getAllTransactions() {
   sendAjax('GET', '/getTransactions', null, function (data) {
 
@@ -440,6 +508,8 @@ var getAllTransactions = function getAllTransactions() {
     ReactDOM.render(React.createElement(CapitalView, { transactions: data.transactions }), document.querySelector("#capitalView"));
 
     ReactDOM.render(React.createElement(ExpenseChartView, { transactions: data.transactions }), document.querySelector("#expenseChartView"));
+
+    ReactDOM.render(React.createElement(SpendingBar, { transactions: data.transactions }), document.querySelector("#spendingBar"));
   });
 };
 
@@ -451,6 +521,8 @@ var setup = function setup(csrf) {
   ReactDOM.render(React.createElement(CapitalView, { transactions: [] }), document.querySelector("#capitalView"));
 
   ReactDOM.render(React.createElement(ExpenseChartView, { transactions: [] }), document.querySelector("#expenseChartView"));
+
+  ReactDOM.render(React.createElement(SpendingBar, { transactions: [] }), document.querySelector("#spendingBar"));
 
   getAllTransactions();
 };

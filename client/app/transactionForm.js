@@ -55,7 +55,8 @@ class TransactionForm extends React.Component {
 
     this.setState({
       type: e.target.value, 
-      categories: newCategories});
+      categories: newCategories,
+    });
   };
   
   render() { return ( <div className="col">
@@ -116,7 +117,10 @@ class TransactionForm extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    //error check
+    this.setState({
+      name: '', 
+      amount: 0,
+    });
     
     sendAjax('POST', $("#transactionForm").attr("action"), $("#transactionForm").serialize(), function() {
       getAllTransactions();
@@ -144,7 +148,7 @@ class TransactionList extends React.Component {
     const transactionNodes = this.props.transactions.map(function(t){
       return (<div key={t._id} className="transaction col">        
         <h3 className="transactionName">Name: {t.name}</h3>
-        <p className="transactionAmount">$: {t.amount}</p>
+        <p className="transactionAmount">Amount: ${t.amount}</p>
         <p className="transactionType">Type: {t.type}</p>  
         <p className="transactionCategory">Category: {t.category}</p>  
       </div>);
@@ -209,6 +213,9 @@ class ExpenseChartView extends React.Component{
   updateCanvas() {
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = "white";
+    ctx.fillRect(0,0,300,450);
 
     const data = this.getDataPercentages();
     let total = 0;
@@ -293,6 +300,58 @@ class ExpenseChartView extends React.Component{
   };
 };
 
+class SpendingBar extends React.Component{
+  constructor(props) {
+    super(props);
+  };  
+
+  componentDidMount() {
+    this.updateCanvas();
+  }
+
+  componentDidUpdate() {
+    this.updateCanvas();
+  }
+
+  updateCanvas() {
+    let incomeTotal = 0;
+    let spendingTotal = 0;
+    this.props.transactions.forEach(t =>{
+      if (t.type == 'income')
+        incomeTotal += t.amount;
+      else
+        spendingTotal += t.amount;
+    });
+
+    const canvas = this.refs.canvas;
+    const ctx = canvas.getContext("2d");
+
+    let biggerTotal = incomeTotal > spendingTotal ? incomeTotal : spendingTotal;
+
+    ctx.fillStyle = "white";
+    ctx.fillRect(0,0,300,50);
+    ctx.fillStyle = "lightgray";
+    ctx.fillRect(0, 0, 200, 20);
+    ctx.fillRect(0, 30, 200, 20);
+    ctx.fillStyle = "#99E948";
+    ctx.fillRect(0, 0, (incomeTotal/biggerTotal) * 200, 20);
+    ctx.fillStyle = "#E94848";
+    ctx.fillRect(0, 30, (spendingTotal/biggerTotal) * 200, 20);
+    ctx.fillStyle = "black";
+    ctx.font = "bold 15px sans-serif";
+    ctx.fillText(`Earned: $${incomeTotal}`, 205, 15);
+    ctx.fillText(`Spent: $${spendingTotal}`, 205, 45);
+  }
+
+  render() {
+    return(
+      <div>
+        <canvas ref="canvas" width={300} height={50} />        
+      </div>
+    );
+  };
+}
+
 const getAllTransactions = () => {
   sendAjax('GET', '/getTransactions', null, (data) => {
 
@@ -309,6 +368,11 @@ const getAllTransactions = () => {
     ReactDOM.render(
       <ExpenseChartView transactions={data.transactions} />,
       document.querySelector("#expenseChartView")
+    );
+
+    ReactDOM.render(
+      <SpendingBar transactions={data.transactions}/>,
+      document.querySelector("#spendingBar")
     );
   });
 };
@@ -332,6 +396,11 @@ const setup = function(csrf) {
   ReactDOM.render(
     <ExpenseChartView transactions={[]}/>,
     document.querySelector("#expenseChartView")
+  );
+
+  ReactDOM.render(
+    <SpendingBar transactions={[]}/>,
+    document.querySelector("#spendingBar")
   );
 
   getAllTransactions();
