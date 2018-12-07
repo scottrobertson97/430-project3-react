@@ -35,3 +35,21 @@ h1 {
   font-size: 24pt;
   text-align: center;
 }
+
+#transactionList{
+  margin-bottom: 110px;
+}
+
+#ad {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  
+}
+
+#ad img {
+  width: 700;
+  height: 100;
+  margin: auto;
+  border: 1px solid black;
+}

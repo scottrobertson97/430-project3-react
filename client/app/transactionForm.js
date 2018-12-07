@@ -1,7 +1,7 @@
 const TRANSACTIONS = {
-  income: ['paycheck', 'cash'],
-  bill: ['rent', 'utilities'],
-  expense: ['food', 'entertainment', 'shopping'],
+  income: ['paycheck', 'cash', 'bonus', 'reimbursement'],
+  bill: ['rent', 'utilities', 'internet', 'phone'],
+  expense: ['food', 'entertainment', 'shopping', 'groceries', 'personal care', 'other'],
 };
 
 const COLORS = [
@@ -215,7 +215,7 @@ class ExpenseChartView extends React.Component{
     const ctx = canvas.getContext("2d");
 
     ctx.fillStyle = "white";
-    ctx.fillRect(0,0,300,450);
+    ctx.fillRect(0,0,300,475);
 
     const data = this.getDataPercentages();
     let total = 0;
@@ -268,13 +268,15 @@ class ExpenseChartView extends React.Component{
   }
 
   drawPercent(ctx, middleAngle, percentage) {
-    ctx.save();
-    const x = 100 * Math.cos(middleAngle) + 130;
-    const y = 100 * Math.sin(middleAngle) + 160;
-    ctx.fillStyle = "White";
-    ctx.font = "bold 20px sans-serif";
-    ctx.fillText(`${percentage}%`, x, y);
-    ctx.restore();
+    if(percentage >= 5) {
+      ctx.save();
+      const x = 100 * Math.cos(middleAngle) + 130;
+      const y = 100 * Math.sin(middleAngle) + 160;
+      ctx.fillStyle = "White";
+      ctx.font = "bold 20px sans-serif";
+      ctx.fillText(`${percentage}%`, x, y);
+      ctx.restore();
+    }
   }
 
   getDataPercentages(){
@@ -294,7 +296,7 @@ class ExpenseChartView extends React.Component{
     return(
       <div>
         <h1>Expenses Ratio</h1>
-        <canvas ref="canvas" width={300} height={450} />        
+        <canvas ref="canvas" width={300} height={475} />        
       </div>
     );
   };

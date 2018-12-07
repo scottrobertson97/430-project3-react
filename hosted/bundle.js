@@ -11,9 +11,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var TRANSACTIONS = {
-  income: ['paycheck', 'cash'],
-  bill: ['rent', 'utilities'],
-  expense: ['food', 'entertainment', 'shopping']
+  income: ['paycheck', 'cash', 'bonus', 'reimbursement'],
+  bill: ['rent', 'utilities', 'internet', 'phone'],
+  expense: ['food', 'entertainment', 'shopping', 'groceries', 'personal care', 'other']
 };
 
 var COLORS = ["#E94848", "#99E948", "#48E9E9", "#9948E9", "#E98548", "#4891E9", "#48E9A4"];
@@ -338,7 +338,7 @@ var ExpenseChartView = function (_React$Component4) {
       var ctx = canvas.getContext("2d");
 
       ctx.fillStyle = "white";
-      ctx.fillRect(0, 0, 300, 450);
+      ctx.fillRect(0, 0, 300, 475);
 
       var data = this.getDataPercentages();
       var total = 0;
@@ -396,13 +396,15 @@ var ExpenseChartView = function (_React$Component4) {
   }, {
     key: 'drawPercent',
     value: function drawPercent(ctx, middleAngle, percentage) {
-      ctx.save();
-      var x = 100 * Math.cos(middleAngle) + 130;
-      var y = 100 * Math.sin(middleAngle) + 160;
-      ctx.fillStyle = "White";
-      ctx.font = "bold 20px sans-serif";
-      ctx.fillText(percentage + '%', x, y);
-      ctx.restore();
+      if (percentage >= 5) {
+        ctx.save();
+        var x = 100 * Math.cos(middleAngle) + 130;
+        var y = 100 * Math.sin(middleAngle) + 160;
+        ctx.fillStyle = "White";
+        ctx.font = "bold 20px sans-serif";
+        ctx.fillText(percentage + '%', x, y);
+        ctx.restore();
+      }
     }
   }, {
     key: 'getDataPercentages',
@@ -429,7 +431,7 @@ var ExpenseChartView = function (_React$Component4) {
           null,
           'Expenses Ratio'
         ),
-        React.createElement('canvas', { ref: 'canvas', width: 300, height: 450 })
+        React.createElement('canvas', { ref: 'canvas', width: 300, height: 475 })
       );
     }
   }]);
