@@ -10,13 +10,17 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+// list of all categories for each type of transaction
 var TRANSACTIONS = {
   income: ['paycheck', 'cash', 'bonus', 'reimbursement'],
   bill: ['rent', 'utilities', 'internet', 'phone'],
   expense: ['food', 'entertainment', 'shopping', 'groceries', 'personal care', 'other']
 };
 
+// list of colors for pie chart
 var COLORS = ["#E94848", "#99E948", "#48E9E9", "#9948E9", "#E98548", "#4891E9", "#48E9A4"];
+
+// form to submit a transaction
 
 var TransactionForm = function (_React$Component) {
   _inherits(TransactionForm, _React$Component);
@@ -41,6 +45,9 @@ var TransactionForm = function (_React$Component) {
 
   _createClass(TransactionForm, [{
     key: 'handleInputChange',
+
+
+    // update field to match input
     value: function handleInputChange(event) {
       var target = event.target;
       var value = target.type === 'checkbox' ? target.checked : target.value;
@@ -50,6 +57,9 @@ var TransactionForm = function (_React$Component) {
     }
   }, {
     key: 'updateCategories',
+
+
+    // update the list of categories in the dropdown
     value: function updateCategories(e) {
       var newCategories = TRANSACTIONS.income;
       switch (e.target.value) {
@@ -119,7 +129,7 @@ var TransactionForm = function (_React$Component) {
           React.createElement(
             'label',
             { htmlFor: 'category' },
-            'Transaction Type'
+            'Category'
           ),
           React.createElement(
             'select',
@@ -154,6 +164,9 @@ var TransactionForm = function (_React$Component) {
     }
   }, {
     key: 'handleSubmit',
+
+
+    // submit a post requiest to add the transaction
     value: function handleSubmit(e) {
       e.preventDefault();
 
@@ -175,6 +188,8 @@ var TransactionForm = function (_React$Component) {
 
 ;
 
+// list of all transactions
+
 var TransactionList = function (_React$Component2) {
   _inherits(TransactionList, _React$Component2);
 
@@ -187,6 +202,7 @@ var TransactionList = function (_React$Component2) {
   _createClass(TransactionList, [{
     key: 'render',
     value: function render() {
+      // if there are no transactions
       if (this.props.transactions.length === 0) {
         return React.createElement(
           'div',
@@ -204,6 +220,7 @@ var TransactionList = function (_React$Component2) {
         );
       }
 
+      // get a list of all transactions
       var transactionNodes = this.props.transactions.map(function (t) {
         return React.createElement(
           'div',
@@ -253,6 +270,8 @@ var TransactionList = function (_React$Component2) {
 
 ;
 
+// view of current balance
+
 var CapitalView = function (_React$Component3) {
   _inherits(CapitalView, _React$Component3);
 
@@ -267,10 +286,16 @@ var CapitalView = function (_React$Component3) {
 
   _createClass(CapitalView, [{
     key: 'addTransactions',
+
+
+    // add up all transactions
     value: function addTransactions() {
       var total = 0;
       this.props.transactions.forEach(function (t) {
-        if (t.type == 'income') total += t.amount;else total -= t.amount;
+        // if it is income add to the total
+        if (t.type == 'income') total += t.amount;
+        // else, it was spent and subtract it
+        else total -= t.amount;
       });
       return total;
     }
@@ -294,6 +319,8 @@ var CapitalView = function (_React$Component3) {
 }(React.Component);
 
 ;
+
+// pie chart of expenses
 
 var ExpenseChartView = function (_React$Component4) {
   _inherits(ExpenseChartView, _React$Component4);
@@ -328,6 +355,7 @@ var ExpenseChartView = function (_React$Component4) {
 
     // https://blog.cloudboost.io/using-html5-canvas-with-react-ff7d93f5dc76
     // for drawing to a canvas in react
+    // draw the canves
 
   }, {
     key: 'updateCanvas',
@@ -337,36 +365,53 @@ var ExpenseChartView = function (_React$Component4) {
       var canvas = this.refs.canvas;
       var ctx = canvas.getContext("2d");
 
+      // fill the background with white for a new draw
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, 300, 475);
 
+      // key value array of spending per expense category
       var data = this.getDataPercentages();
+      // total expenses
       var total = 0;
+      // start at the top of the pie chart
       var startAngle = -0.5 * Math.PI;
 
-      //get total expenses
+      // get total expenses
       TRANSACTIONS.expense.forEach(function (category) {
         total += data[category];
       });
 
+      // index in color array
       var colorIndex = 0;
+
+      //dray gray background, so if there are no expenses there is a black circle
+      this.drawPieSlice(ctx, 150, 150, 140, 0, 2 * Math.PI, 'lightgray');
 
       //color in the slices of the pie
       TRANSACTIONS.expense.forEach(function (category) {
+        // get percentage
         var percentage = data[category] / total;
+        // get percent of circle
         var rads = percentage * 2 * Math.PI;
+        // draw the slice
         _this5.drawPieSlice(ctx, 150, 150, 140, startAngle, startAngle + rads, COLORS[colorIndex]);
+        // draw the percent text on the slick
         _this5.drawPercent(ctx, startAngle + 0.5 * rads, Math.round(percentage * 100));
+        // draw the labe in the key
         _this5.drawKey(ctx, colorIndex, category);
+        // increment color index
         colorIndex++;
+        // move the starting angle
         startAngle += rads;
       });
 
+      //draw white circle to make the chart a donut
       this.drawPieSlice(ctx, 150, 150, 50, 0, 2 * Math.PI, 'white');
     }
 
     // https://code.tutsplus.com/tutorials/how-to-draw-a-pie-chart-and-doughnut-chart-using-javascript-and-html5-canvas--cms-27197
     // for drawing a pie chart with canvas
+    // draw a slick of the pie chart
 
   }, {
     key: 'drawPieSlice',
@@ -375,29 +420,47 @@ var ExpenseChartView = function (_React$Component4) {
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
+      // draw an arc
       ctx.arc(centerX, centerY, radius, startAngle, endAngle);
       ctx.closePath();
       ctx.fill();
       ctx.restore();
     }
+
+    // draw a label in the key
+
   }, {
     key: 'drawKey',
     value: function drawKey(ctx, colorIndex, label) {
       ctx.save();
       ctx.fillStyle = COLORS[colorIndex];
       var x = 10;
+      // hight is based on where it is in the list
+      // color index increments, so it moves down
       var y = 300 + colorIndex * 30;
+      // draw a rect of the color, that matches the slice color
       ctx.fillRect(x, y, 20, 20);
       ctx.fillStyle = "black";
       ctx.font = "bold 15px sans-serif";
+      // write the category name in the key
       ctx.fillText('' + label.charAt(0).toUpperCase() + label.slice(1), x + 25, y + 15);
       ctx.restore();
     }
+
+    // draws the percentage on the pie slice
+
   }, {
     key: 'drawPercent',
     value: function drawPercent(ctx, middleAngle, percentage) {
+      // only draw if percentage is > 5
+      // b/c the slice has to be big enough
       if (percentage >= 5) {
         ctx.save();
+        // radius of 100
+        // center is 150
+        // offest for x is -20
+        // offset for y is +10
+        // this centers it to the slice, compensating for text size
         var x = 100 * Math.cos(middleAngle) + 130;
         var y = 100 * Math.sin(middleAngle) + 160;
         ctx.fillStyle = "White";
@@ -406,13 +469,18 @@ var ExpenseChartView = function (_React$Component4) {
         ctx.restore();
       }
     }
+
+    // get a list of the amount per expense category
+
   }, {
     key: 'getDataPercentages',
     value: function getDataPercentages() {
       var data = [];
+      // fill data with 0, per category
       TRANSACTIONS.expense.forEach(function (category) {
         data[category] = 0;
       });
+      // add amount to each category in data
       this.props.transactions.forEach(function (t) {
         if (t.type == 'expense') {
           data[t.category] += t.amount;
@@ -441,6 +509,8 @@ var ExpenseChartView = function (_React$Component4) {
 
 ;
 
+// bars to compair income vs spending
+
 var SpendingBar = function (_React$Component5) {
   _inherits(SpendingBar, _React$Component5);
 
@@ -465,6 +535,7 @@ var SpendingBar = function (_React$Component5) {
     value: function updateCanvas() {
       var incomeTotal = 0;
       var spendingTotal = 0;
+      // add income and bill/expense to their totals
       this.props.transactions.forEach(function (t) {
         if (t.type == 'income') incomeTotal += t.amount;else spendingTotal += t.amount;
       });
@@ -472,17 +543,26 @@ var SpendingBar = function (_React$Component5) {
       var canvas = this.refs.canvas;
       var ctx = canvas.getContext("2d");
 
+      // get which one is bigger to determine what is viewed
+      // in proportion to the other one
       var biggerTotal = incomeTotal > spendingTotal ? incomeTotal : spendingTotal;
 
+      // draw the bg
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, 300, 50);
+      // draw 2 blank bars
       ctx.fillStyle = "lightgray";
       ctx.fillRect(0, 0, 200, 20);
       ctx.fillRect(0, 30, 200, 20);
+      // income color is green
       ctx.fillStyle = "#99E948";
+      //draw income bar in proportion to the bigger total
       ctx.fillRect(0, 0, incomeTotal / biggerTotal * 200, 20);
+      // spending color is red
       ctx.fillStyle = "#E94848";
+      //draw spending bar in proportion to the bigger total
       ctx.fillRect(0, 30, spendingTotal / biggerTotal * 200, 20);
+      // write text
       ctx.fillStyle = "black";
       ctx.font = "bold 15px sans-serif";
       ctx.fillText('Earned: $' + incomeTotal, 205, 15);
